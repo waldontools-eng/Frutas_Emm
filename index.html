@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
 <style>
+/* Layout: una sola columna centrada, tarjeta grande con la fruta; el micrófono es el botón principal */
 :root{
   --bg:#E8F3EE; --surface:#FFFFFF; --ink:#12332E; --muted:#4F6F68; --line:#C5DDD4;
   --accent:#F28C0F; --accent-ink:#2A1600; --ok:#1E9E62; --bad:#D9482B; --star:#F2B100;
@@ -33,6 +34,7 @@ header{display:flex; align-items:center; justify-content:space-between; gap:12px
 h1{font-family:var(--display); font-weight:800; font-size:1.6rem; margin:0; text-wrap:balance}
 .total{font-family:var(--display); font-weight:800; font-size:1.2rem; display:flex; align-items:center; gap:6px; white-space:nowrap}
 .total svg{width:22px; height:22px; fill:var(--star)}
+
 .levels{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(10,1fr); gap:6px}
 .levels li{
   height:28px; border-radius:8px; background:var(--surface); border:2px solid var(--line);
@@ -41,6 +43,7 @@ h1{font-family:var(--display); font-weight:800; font-size:1.6rem; margin:0; text
 .levels li.done{background:var(--ok); border-color:var(--ok); color:#fff}
 .levels li.current{border-color:var(--accent); color:var(--ink); box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 30%,transparent)}
 .level-label{margin:0; color:var(--muted); font-weight:800; text-transform:uppercase; letter-spacing:.08em; font-size:.8rem}
+
 .card{
   background:var(--surface); border:2px solid var(--line); border-radius:28px; padding:24px 20px 20px;
   display:flex; flex-direction:column; align-items:center; gap:12px; text-align:center;
@@ -56,6 +59,7 @@ h1{font-family:var(--display); font-weight:800; font-size:1.6rem; margin:0; text
 .stars{display:flex; gap:6px; min-height:34px}
 .stars svg{width:34px; height:34px; fill:var(--line)}
 .stars svg.on{fill:var(--star)}
+
 .actions{display:flex; flex-direction:column; gap:10px; width:100%; margin-top:4px}
 button{font:inherit; cursor:pointer; border:0}
 button:focus-visible{outline:4px solid var(--ink); outline-offset:3px}
@@ -80,16 +84,20 @@ button:focus-visible{outline:4px solid var(--ink); outline-offset:3px}
 .status.ok{color:var(--ok)}
 .status.bad{color:var(--bad)}
 .heard{font-weight:600; color:var(--muted)}
+
 .shake{animation:shake .45s}
 @keyframes shake{20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-6px)} 80%{transform:translateX(6px)}}
 .pop{animation:pop .5s}
 @keyframes pop{40%{transform:scale(1.1)} 100%{transform:scale(1)}}
+
 .teacher{align-self:center; background:none; color:var(--muted); text-decoration:underline; font-size:.85rem; padding:8px}
 .notice{background:var(--surface); border:2px solid var(--bad); border-radius:16px; padding:12px 14px; font-weight:700; font-size:.95rem}
+
 .end{background:var(--surface); border:2px solid var(--line); border-radius:28px; padding:28px 20px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:14px}
 .end .big{font-size:96px; line-height:1}
 .end h2{font-family:var(--display); font-size:2rem; margin:0}
 .end p{margin:0; color:var(--muted); font-weight:700}
+
 @media (prefers-reduced-motion:reduce){ *{animation:none!important} }
 </style>
 </head>
@@ -153,6 +161,8 @@ button:focus-visible{outline:4px solid var(--ink); outline-offset:3px}
     {en:'lemon',      emoji:'🍋', tint:'#E6D200', syll:'lem · on',            ok:['lemon','lemons']}
   ];
   var KEY = 'frutas-voz-v1';
+  /* Claridad mínima (0 a 1) para aceptar la palabra. Sube el número para ser más estricto, bájalo para ser más permisivo. */
+  var MIN_CONFIDENCE = 0.85;
   var STAR_PATH = 'M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7L12 17.3 5.8 20.9l1.6-7L2 9.2l7.1-.6z';
 
   var $ = function(id){ return document.getElementById(id); };
@@ -173,6 +183,7 @@ button:focus-visible{outline:4px solid var(--ink); outline-offset:3px}
   }
   function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
 
+  /* ---------- sonidos ---------- */
   function tone(freqs, dur){
     try{
       audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
@@ -189,6 +200,7 @@ button:focus-visible{outline:4px solid var(--ink); outline-offset:3px}
     }catch(e){}
   }
 
+  /* ---------- voz del modelo ---------- */
   function speak(text, rate){
     if(!('speechSynthesis' in window)) return;
     speechSynthesis.cancel();
@@ -199,6 +211,7 @@ button:focus-visible{outline:4px solid var(--ink); outline-offset:3px}
     speechSynthesis.speak(u);
   }
 
+  /* ---------- comparación de lo que dijo el niño ---------- */
   function lev(a, b){
     var m = [], i, j;
     for(i=0;i<=a.length;i++){ m[i]=[i]; }
@@ -208,23 +221,14 @@ button:focus-visible{outline:4px solid var(--ink); outline-offset:3px}
     }}
     return m[a.length][b.length];
   }
+  /* Estricto: solo la palabra exacta, sin plurales ni palabras parecidas */
   function matches(transcript, fruit){
     var clean = transcript.toLowerCase().replace(/[^a-z\s]/g,' ').replace(/\s+/g,' ').trim();
     if(!clean) return false;
-    var tokens = clean.split(' ');
-    var squashed = clean.replace(/ /g,'');
-    var okList = fruit.ok;
-    for(var i=0;i<okList.length;i++){
-      if(tokens.indexOf(okList[i]) !== -1) return true;
-      if(squashed === okList[i]) return true;
-    }
-    if(fruit.en.length >= 7){
-      for(var k=0;k<tokens.length;k++){ if(lev(tokens[k], fruit.en) <= 1) return true; }
-      if(lev(squashed, fruit.en) <= 1) return true;
-    }
-    return false;
+    return clean.split(' ').indexOf(fruit.en) !== -1 || clean.replace(/ /g,'') === fruit.en;
   }
 
+  /* ---------- pantalla ---------- */
   function renderStars(n){
     el.stars.innerHTML = '';
     for(var i=0;i<3;i++){
@@ -278,6 +282,7 @@ button:focus-visible{outline:4px solid var(--ink); outline-offset:3px}
     tone([523,659,784,1047], 0.16);
   }
 
+  /* ---------- resultado ---------- */
   function succeed(heard, skipped){
     if(locked) return;
     locked = true;
@@ -286,21 +291,24 @@ button:focus-visible{outline:4px solid var(--ink); outline-offset:3px}
     state.level += 1; save();
     renderStars(n);
     el.pic.classList.remove('pop'); void el.pic.offsetWidth; el.pic.classList.add('pop');
-    setStatus(skipped ? 'Nivel superado.' : '¡Muy bien! Lo pronunciaste perfecto.', 'ok');
+    setStatus(skipped ? 'Nivel superado.' : '¡Muy bien! Se entendió claro.', 'ok', skipped ? '' : heard);
     tone([659,880], 0.14);
     var sum = state.stars.reduce(function(a,b){ return a+b; }, 0);
     el.total.textContent = sum;
     nextTimer = setTimeout(showLevel, 1800);
   }
-  function fail(heard){
+  function fail(heard, lowConf){
     attempts += 1;
     el.card.classList.remove('shake'); void el.card.offsetWidth; el.card.classList.add('shake');
     tone([300,220], 0.16);
     var f = FRUITS[state.level];
     if(attempts >= 2) el.syll.textContent = f.syll;
-    setStatus(attempts >= 2 ? 'Casi. Escucha y repite por sílabas.' : 'Casi. Inténtalo otra vez.', 'bad', heard);
+    var msg = lowConf ? 'Casi. Se entendió, pero suena poco claro. Escucha y repite más despacio.'
+      : (attempts >= 2 ? 'Casi. Escucha y repite por sílabas.' : 'Casi. Inténtalo otra vez.');
+    setStatus(msg, 'bad', heard);
   }
 
+  /* ---------- reconocimiento de voz ---------- */
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 
   function setListening(on){
@@ -314,18 +322,24 @@ button:focus-visible{outline:4px solid var(--ink); outline-offset:3px}
     var fruit = FRUITS[state.level];
     var judged = false, errored = false, lastHeard = '';
     rec = new SR();
-    rec.lang = 'en-US'; rec.interimResults = true; rec.maxAlternatives = 5; rec.continuous = false;
+    rec.lang = 'en-US'; rec.interimResults = true; rec.maxAlternatives = 1; rec.continuous = false;
 
     rec.onstart = function(){ setListening(true); setStatus('Di: “' + fruit.en + '”'); };
     rec.onresult = function(e){
       if(judged) return;
       var res = e.results[e.results.length-1];
-      var alts = [];
-      for(var i=0;i<res.length;i++) alts.push(res[i].transcript);
-      lastHeard = alts[0] || '';
-      var hit = alts.some(function(t){ return matches(t, fruit); });
-      if(hit){ judged = true; try{ rec.stop(); }catch(_){} succeed(lastHeard); return; }
-      if(res.isFinal){ judged = true; fail(lastHeard); }
+      var top = res[0];
+      lastHeard = top.transcript || '';
+      if(!res.isFinal) return;
+      judged = true;
+      var conf = (typeof top.confidence === 'number') ? top.confidence : 0;
+      var pct = conf > 0 ? Math.round(conf*100) : null;
+      var said = lastHeard.trim() + (pct !== null ? ' (' + pct + '%)' : '');
+      var wordOk = matches(lastHeard, fruit);
+      var clear = (conf === 0) || conf >= MIN_CONFIDENCE;
+      if(wordOk && clear){ succeed(said); }
+      else if(wordOk){ fail(said, true); }
+      else { fail(said); }
     };
     rec.onerror = function(e){
       errored = true; judged = true;
@@ -348,6 +362,7 @@ button:focus-visible{outline:4px solid var(--ink); outline-offset:3px}
     try{ rec.start(); }catch(err){ setListening(false); }
   }
 
+  /* ---------- eventos ---------- */
   el.mic.addEventListener('click', startListening);
   el.listen.addEventListener('click', function(){
     if(state.level < FRUITS.length) speak(FRUITS[state.level].en, 0.75);
