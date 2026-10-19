@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Frutas en inglés</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E8F3EE; --surface:#FFFFFF; --ink:#12332E; --muted:#4F6F68; --line:#C5DDD4;
+  --accent:#F28C0F; --accent-ink:#2A1600; --ok:#1E9E62; --bad:#D9482B; --star:#F2B100;
+  --display:'Baloo 2','Trebuchet MS','Arial Rounded MT Bold',system-ui,sans-serif;
+  --body:'Nunito','Segoe UI',system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#0E2421; --surface:#17342F; --ink:#E6F5F0; --muted:#9BBDB4; --line:#2C524A;
+    --accent:#FFA62B; --accent-ink:#2A1600; --ok:#4AD18B; --bad:#FF7A5C; --star:#FFCB3D;
+    color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:var(--bg); color:var(--ink); font-family:var(--body); font-size:17px; line-height:1.4;
+  min-height:100vh; padding-block:max(16px,env(safe-area-inset-top,0px)) max(24px,env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+.app{max-width:520px; margin:0 auto; display:flex; flex-direction:column; gap:16px}
+header{display:flex; align-items:center; justify-content:space-between; gap:12px}
+h1{font-family:var(--display); font-weight:800; font-size:1.6rem; margin:0; text-wrap:balance}
+.total{font-family:var(--display); font-weight:800; font-size:1.2rem; display:flex; align-items:center; gap:6px; white-space:nowrap}
+.total svg{width:22px; height:22px; fill:var(--star)}
+.levels{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(10,1fr); gap:6px}
+.levels li{
+  height:28px; border-radius:8px; background:var(--surface); border:2px solid var(--line);
+  display:grid; place-items:center; font-family:var(--display); font-weight:800; font-size:.85rem; color:var(--muted);
+}
+.levels li.done{background:var(--ok); border-color:var(--ok); color:#fff}
+.levels li.current{border-color:var(--accent); color:var(--ink); box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 30%,transparent)}
+.level-label{margin:0; color:var(--muted); font-weight:800; text-transform:uppercase; letter-spacing:.08em; font-size:.8rem}
+.card{
+  background:var(--surface); border:2px solid var(--line); border-radius:28px; padding:24px 20px 20px;
+  display:flex; flex-direction:column; align-items:center; gap:12px; text-align:center;
+}
+.pic{
+  width:min(60vw,220px); aspect-ratio:1; border-radius:50%;
+  background:color-mix(in srgb,var(--tint,#ccc) 38%,var(--surface));
+  display:grid; place-items:center; font-size:min(34vw,128px); line-height:1;
+  font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif;
+}
+.word{font-family:var(--display); font-weight:800; font-size:clamp(2.4rem,12vw,3.6rem); letter-spacing:.02em; line-height:1.05}
+.syll{font-family:var(--display); font-weight:600; font-size:1.3rem; color:var(--muted); min-height:1.6em; letter-spacing:.12em}
+.stars{display:flex; gap:6px; min-height:34px}
+.stars svg{width:34px; height:34px; fill:var(--line)}
+.stars svg.on{fill:var(--star)}
+.actions{display:flex; flex-direction:column; gap:10px; width:100%; margin-top:4px}
+button{font:inherit; cursor:pointer; border:0}
+button:focus-visible{outline:4px solid var(--ink); outline-offset:3px}
+.mic{
+  position:relative; width:100%; min-height:72px; border-radius:36px; background:var(--accent); color:var(--accent-ink);
+  font-family:var(--display); font-weight:800; font-size:1.5rem; display:flex; align-items:center; justify-content:center; gap:12px;
+}
+.mic svg{width:30px; height:30px; fill:currentColor}
+.mic:disabled{opacity:.5; cursor:not-allowed}
+.mic.listening{background:var(--bad); color:#fff}
+.mic.listening::after{
+  content:""; position:absolute; inset:-6px; border-radius:42px; border:3px solid var(--bad); opacity:.6;
+  animation:pulse 1.1s ease-out infinite;
+}
+@keyframes pulse{from{transform:scale(.97); opacity:.7} to{transform:scale(1.06); opacity:0}}
+.listen{
+  min-height:52px; border-radius:26px; background:transparent; color:var(--ink); border:2px solid var(--line);
+  font-weight:800; display:flex; align-items:center; justify-content:center; gap:10px;
+}
+.listen svg{width:24px; height:24px; fill:currentColor}
+.status{margin:0; min-height:3.2em; font-weight:700; max-width:34ch; text-wrap:balance}
+.status.ok{color:var(--ok)}
+.status.bad{color:var(--bad)}
+.heard{font-weight:600; color:var(--muted)}
+.shake{animation:shake .45s}
+@keyframes shake{20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-6px)} 80%{transform:translateX(6px)}}
+.pop{animation:pop .5s}
+@keyframes pop{40%{transform:scale(1.1)} 100%{transform:scale(1)}}
+.teacher{align-self:center; background:none; color:var(--muted); text-decoration:underline; font-size:.85rem; padding:8px}
+.notice{background:var(--surface); border:2px solid var(--bad); border-radius:16px; padding:12px 14px; font-weight:700; font-size:.95rem}
+.end{background:var(--surface); border:2px solid var(--line); border-radius:28px; padding:28px 20px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:14px}
+.end .big{font-size:96px; line-height:1}
+.end h2{font-family:var(--display); font-size:2rem; margin:0}
+.end p{margin:0; color:var(--muted); font-weight:700}
+@media (prefers-reduced-motion:reduce){ *{animation:none!important} }
+</style>
+</head>
+<body>
+<main class="app">
+  <header>
+    <h1>Frutas en inglés</h1>
+    <div class="total" aria-label="Estrellas ganadas">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7L12 17.3 5.8 20.9l1.6-7L2 9.2l7.1-.6z"/></svg>
+      <span id="totalStars">0</span>
+    </div>
+  </header>
+
+  <div id="unsupported" class="notice" hidden>
+    Este navegador no reconoce la voz. Abre el juego en Google Chrome o Microsoft Edge (computadora o Android).
+  </div>
+
+  <ol class="levels" id="levels" aria-label="Niveles"></ol>
+  <p class="level-label" id="levelLabel"></p>
+
+  <section class="card" id="card">
+    <div class="pic" id="pic" role="img"></div>
+    <div class="word" id="word"></div>
+    <div class="syll" id="syll"></div>
+    <div class="stars" id="stars" aria-hidden="true"></div>
+    <div class="actions">
+      <button class="mic" id="mic" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.9V21h2v-3.1A7 7 0 0 0 19 11z"/></svg>
+        <span id="micLabel">Hablar</span>
+      </button>
+      <button class="listen" id="listen" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg>
+        Escuchar cómo se dice
+      </button>
+    </div>
+    <p class="status" id="status" aria-live="polite"></p>
+  </section>
+
+  <button class="teacher" id="skip" type="button">Pasar de nivel (maestro)</button>
+
+  <section class="end" id="end" hidden>
+    <div class="big">🏆</div>
+    <h2>¡Terminaste!</h2>
+    <p id="endText"></p>
+    <button class="mic" id="again" type="button" style="max-width:320px"><span>Jugar otra vez</span></button>
+  </section>
+</main>
+
+<script>
+(function(){
+  var FRUITS = [
+    {en:'apple',      emoji:'🍎', tint:'#E5484D', syll:'ap · ple',            ok:['apple','apples']},
+    {en:'banana',     emoji:'🍌', tint:'#F5C400', syll:'ba · na · na',        ok:['banana','bananas']},
+    {en:'orange',     emoji:'🍊', tint:'#F28C0F', syll:'or · ange',           ok:['orange','oranges']},
+    {en:'grapes',     emoji:'🍇', tint:'#7B4FB8', syll:'grapes',              ok:['grapes','grape']},
+    {en:'strawberry', emoji:'🍓', tint:'#E03A5A', syll:'straw · ber · ry',    ok:['strawberry','strawberries']},
+    {en:'mango',      emoji:'🥭', tint:'#F59E0B', syll:'man · go',            ok:['mango','mangos','mangoes']},
+    {en:'pineapple',  emoji:'🍍', tint:'#D9A400', syll:'pine · ap · ple',     ok:['pineapple','pineapples']},
+    {en:'watermelon', emoji:'🍉', tint:'#2FA84F', syll:'wa · ter · mel · on', ok:['watermelon','watermelons']},
+    {en:'coconut',    emoji:'🥥', tint:'#8A6A4F', syll:'co · co · nut',       ok:['coconut','coconuts']},
+    {en:'lemon',      emoji:'🍋', tint:'#E6D200', syll:'lem · on',            ok:['lemon','lemons']}
+  ];
+  var KEY = 'frutas-voz-v1';
+  var STAR_PATH = 'M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7L12 17.3 5.8 20.9l1.6-7L2 9.2l7.1-.6z';
+
+  var $ = function(id){ return document.getElementById(id); };
+  var el = {
+    levels:$('levels'), label:$('levelLabel'), card:$('card'), pic:$('pic'), word:$('word'), syll:$('syll'),
+    stars:$('stars'), mic:$('mic'), micLabel:$('micLabel'), listen:$('listen'), status:$('status'),
+    skip:$('skip'), end:$('end'), endText:$('endText'), again:$('again'), total:$('totalStars'), unsup:$('unsupported')
+  };
+
+  var state = { level:0, stars:[] };
+  var attempts = 0, locked = false, listening = false, rec = null, nextTimer = null, audioCtx = null;
+
+  function load(){
+    try{
+      var s = JSON.parse(localStorage.getItem(KEY) || 'null');
+      if(s && Array.isArray(s.stars)){ state = { level:Math.min(s.level|0, FRUITS.length), stars:s.stars.slice(0, FRUITS.length) }; }
+    }catch(e){}
+  }
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+
+  function tone(freqs, dur){
+    try{
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      var t = audioCtx.currentTime;
+      freqs.forEach(function(f, i){
+        var o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.type = 'sine'; o.frequency.value = f;
+        g.gain.setValueAtTime(0.0001, t + i*dur);
+        g.gain.exponentialRampToValueAtTime(0.25, t + i*dur + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + i*dur + dur);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(t + i*dur); o.stop(t + i*dur + dur + 0.02);
+      });
+    }catch(e){}
+  }
+
+  function speak(text, rate){
+    if(!('speechSynthesis' in window)) return;
+    speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-US'; u.rate = rate || 0.8; u.pitch = 1.05;
+    var v = speechSynthesis.getVoices().filter(function(x){ return /^en(-|_)US/i.test(x.lang); })[0];
+    if(v) u.voice = v;
+    speechSynthesis.speak(u);
+  }
+
+  function lev(a, b){
+    var m = [], i, j;
+    for(i=0;i<=a.length;i++){ m[i]=[i]; }
+    for(j=0;j<=b.length;j++){ m[0][j]=j; }
+    for(i=1;i<=a.length;i++){ for(j=1;j<=b.length;j++){
+      m[i][j] = Math.min(m[i-1][j]+1, m[i][j-1]+1, m[i-1][j-1] + (a[i-1]===b[j-1]?0:1));
+    }}
+    return m[a.length][b.length];
+  }
+  function matches(transcript, fruit){
+    var clean = transcript.toLowerCase().replace(/[^a-z\s]/g,' ').replace(/\s+/g,' ').trim();
+    if(!clean) return false;
+    var tokens = clean.split(' ');
+    var squashed = clean.replace(/ /g,'');
+    var okList = fruit.ok;
+    for(var i=0;i<okList.length;i++){
+      if(tokens.indexOf(okList[i]) !== -1) return true;
+      if(squashed === okList[i]) return true;
+    }
+    if(fruit.en.length >= 7){
+      for(var k=0;k<tokens.length;k++){ if(lev(tokens[k], fruit.en) <= 1) return true; }
+      if(lev(squashed, fruit.en) <= 1) return true;
+    }
+    return false;
+  }
+
+  function renderStars(n){
+    el.stars.innerHTML = '';
+    for(var i=0;i<3;i++){
+      var s = document.createElementNS('http://www.w3.org/2000/svg','svg');
+      s.setAttribute('viewBox','0 0 24 24');
+      if(i < n) s.setAttribute('class','on');
+      var p = document.createElementNS('http://www.w3.org/2000/svg','path');
+      p.setAttribute('d', STAR_PATH); s.appendChild(p); el.stars.appendChild(s);
+    }
+  }
+  function renderLevels(){
+    el.levels.innerHTML = '';
+    FRUITS.forEach(function(f, i){
+      var li = document.createElement('li');
+      li.textContent = i+1;
+      if(i < state.level) li.className = 'done';
+      else if(i === state.level) li.className = 'current';
+      el.levels.appendChild(li);
+    });
+    var sum = state.stars.reduce(function(a,b){ return a+b; }, 0);
+    el.total.textContent = sum;
+  }
+  function setStatus(text, cls, heard){
+    el.status.className = 'status' + (cls ? ' ' + cls : '');
+    el.status.textContent = text;
+    if(heard){
+      var br = document.createElement('br'); el.status.appendChild(br);
+      var sp = document.createElement('span'); sp.className = 'heard'; sp.textContent = 'Escuché: “' + heard + '”';
+      el.status.appendChild(sp);
+    }
+  }
+  function showLevel(){
+    clearTimeout(nextTimer);
+    locked = false; attempts = 0;
+    if(state.level >= FRUITS.length){ showEnd(); return; }
+    el.end.hidden = true; el.card.hidden = false; el.skip.hidden = false;
+    var f = FRUITS[state.level];
+    el.pic.textContent = f.emoji; el.pic.style.setProperty('--tint', f.tint); el.pic.setAttribute('aria-label', f.en);
+    el.word.textContent = f.en; el.syll.textContent = '';
+    el.label.textContent = 'Nivel ' + (state.level+1) + ' de ' + FRUITS.length;
+    renderStars(0); renderLevels();
+    setStatus('Toca el micrófono y di la palabra en inglés.');
+    el.mic.disabled = !SR;
+  }
+  function showEnd(){
+    el.card.hidden = true; el.skip.hidden = true; el.end.hidden = false;
+    el.label.textContent = 'Juego completo';
+    var sum = state.stars.reduce(function(a,b){ return a+b; }, 0);
+    el.endText.textContent = 'Ganaste ' + sum + ' de ' + (FRUITS.length*3) + ' estrellas.';
+    renderLevels();
+    tone([523,659,784,1047], 0.16);
+  }
+
+  function succeed(heard, skipped){
+    if(locked) return;
+    locked = true;
+    var n = skipped ? 1 : (attempts === 0 ? 3 : attempts === 1 ? 2 : 1);
+    state.stars[state.level] = n;
+    state.level += 1; save();
+    renderStars(n);
+    el.pic.classList.remove('pop'); void el.pic.offsetWidth; el.pic.classList.add('pop');
+    setStatus(skipped ? 'Nivel superado.' : '¡Muy bien! Lo pronunciaste perfecto.', 'ok');
+    tone([659,880], 0.14);
+    var sum = state.stars.reduce(function(a,b){ return a+b; }, 0);
+    el.total.textContent = sum;
+    nextTimer = setTimeout(showLevel, 1800);
+  }
+  function fail(heard){
+    attempts += 1;
+    el.card.classList.remove('shake'); void el.card.offsetWidth; el.card.classList.add('shake');
+    tone([300,220], 0.16);
+    var f = FRUITS[state.level];
+    if(attempts >= 2) el.syll.textContent = f.syll;
+    setStatus(attempts >= 2 ? 'Casi. Escucha y repite por sílabas.' : 'Casi. Inténtalo otra vez.', 'bad', heard);
+  }
+
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  function setListening(on){
+    listening = on;
+    el.mic.classList.toggle('listening', on);
+    el.micLabel.textContent = on ? 'Te escucho…' : 'Hablar';
+  }
+  function startListening(){
+    if(!SR || locked || listening) return;
+    if('speechSynthesis' in window) speechSynthesis.cancel();
+    var fruit = FRUITS[state.level];
+    var judged = false, errored = false, lastHeard = '';
+    rec = new SR();
+    rec.lang = 'en-US'; rec.interimResults = true; rec.maxAlternatives = 5; rec.continuous = false;
+
+    rec.onstart = function(){ setListening(true); setStatus('Di: “' + fruit.en + '”'); };
+    rec.onresult = function(e){
+      if(judged) return;
+      var res = e.results[e.results.length-1];
+      var alts = [];
+      for(var i=0;i<res.length;i++) alts.push(res[i].transcript);
+      lastHeard = alts[0] || '';
+      var hit = alts.some(function(t){ return matches(t, fruit); });
+      if(hit){ judged = true; try{ rec.stop(); }catch(_){} succeed(lastHeard); return; }
+      if(res.isFinal){ judged = true; fail(lastHeard); }
+    };
+    rec.onerror = function(e){
+      errored = true; judged = true;
+      if(e.error === 'not-allowed' || e.error === 'service-not-allowed'){
+        setStatus('Permite el micrófono en el navegador para poder jugar.', 'bad');
+      }else if(e.error === 'no-speech'){
+        setStatus('No te escuché. Acércate al micrófono y prueba otra vez.', 'bad');
+      }else if(e.error === 'network'){
+        setStatus('Necesitas internet para que funcione el reconocimiento de voz.', 'bad');
+      }else if(e.error !== 'aborted'){
+        setStatus('No pude escucharte. Prueba otra vez.', 'bad');
+      }
+    };
+    rec.onend = function(){
+      setListening(false);
+      if(!judged && !errored){
+        if(lastHeard) fail(lastHeard); else setStatus('No te escuché. Toca el micrófono y prueba otra vez.', 'bad');
+      }
+    };
+    try{ rec.start(); }catch(err){ setListening(false); }
+  }
+
+  el.mic.addEventListener('click', startListening);
+  el.listen.addEventListener('click', function(){
+    if(state.level < FRUITS.length) speak(FRUITS[state.level].en, 0.75);
+  });
+  el.skip.addEventListener('click', function(){ if(state.level < FRUITS.length) succeed('', true); });
+  el.again.addEventListener('click', function(){ state = { level:0, stars:[] }; save(); showLevel(); });
+  if('speechSynthesis' in window) speechSynthesis.getVoices();
+
+  if(!SR) el.unsup.hidden = false;
+  load();
+  showLevel();
+})();
+</script>
+</body>
+</html>
