@@ -3,12 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Frutas en inglés</title>
+<title>Inglés para peques</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
 <style>
-/* Layout: una sola columna centrada, tarjeta grande con la fruta; el micrófono es el botón principal */
 :root{
   --bg:#E8F3EE; --surface:#FFFFFF; --ink:#12332E; --muted:#4F6F68; --line:#C5DDD4;
   --accent:#F28C0F; --accent-ink:#2A1600; --ok:#1E9E62; --bad:#D9482B; --star:#F2B100;
@@ -35,7 +34,16 @@ h1{font-family:var(--display); font-weight:800; font-size:1.6rem; margin:0; text
 .total{font-family:var(--display); font-weight:800; font-size:1.2rem; display:flex; align-items:center; gap:6px; white-space:nowrap}
 .total svg{width:22px; height:22px; fill:var(--star)}
 
-.levels{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(10,1fr); gap:6px}
+.cats{display:flex; flex-wrap:wrap; gap:8px}
+.cat{
+  background:var(--surface); color:var(--ink); border:2px solid var(--line); border-radius:999px;
+  padding:8px 14px; font-weight:800; font-size:.95rem; display:flex; gap:8px; align-items:center;
+}
+.cat span{color:var(--muted); font-weight:800}
+.cat.current{border-color:var(--accent); box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 30%,transparent)}
+.cat.full{background:color-mix(in srgb,var(--ok) 18%,var(--surface))}
+
+.levels{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(var(--n,8),1fr); gap:6px}
 .levels li{
   height:28px; border-radius:8px; background:var(--surface); border:2px solid var(--line);
   display:grid; place-items:center; font-family:var(--display); font-weight:800; font-size:.85rem; color:var(--muted);
@@ -54,12 +62,15 @@ h1{font-family:var(--display); font-weight:800; font-size:1.6rem; margin:0; text
   display:grid; place-items:center; font-size:min(34vw,128px); line-height:1;
   font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif;
 }
+.pic.swatch{background:var(--sw); border:6px solid var(--line)}
+.pic.num{font-family:var(--display); font-weight:800; font-size:min(40vw,150px); color:var(--ink)}
+.dots{display:flex; flex-wrap:wrap; justify-content:center; gap:8px; max-width:260px; min-height:20px}
+.dots i{width:18px; height:18px; border-radius:50%; background:var(--tint,var(--accent))}
 .word{font-family:var(--display); font-weight:800; font-size:clamp(2.4rem,12vw,3.6rem); letter-spacing:.02em; line-height:1.05}
-.syll{font-family:var(--display); font-weight:600; font-size:1.3rem; color:var(--muted); min-height:1.6em; letter-spacing:.12em}
+.syll{font-family:var(--display); font-weight:600; font-size:1.3rem; color:var(--muted); min-height:1.6em; letter-spacing:.06em}
 .stars{display:flex; gap:6px; min-height:34px}
 .stars svg{width:34px; height:34px; fill:var(--line)}
 .stars svg.on{fill:var(--star)}
-
 .actions{display:flex; flex-direction:column; gap:10px; width:100%; margin-top:4px}
 button{font:inherit; cursor:pointer; border:0}
 button:focus-visible{outline:4px solid var(--ink); outline-offset:3px}
@@ -68,7 +79,6 @@ button:focus-visible{outline:4px solid var(--ink); outline-offset:3px}
   font-family:var(--display); font-weight:800; font-size:1.5rem; display:flex; align-items:center; justify-content:center; gap:12px;
 }
 .mic svg{width:30px; height:30px; fill:currentColor}
-.mic:disabled{opacity:.5; cursor:not-allowed}
 .mic.listening{background:var(--bad); color:#fff}
 .mic.listening::after{
   content:""; position:absolute; inset:-6px; border-radius:42px; border:3px solid var(--bad); opacity:.6;
@@ -80,46 +90,53 @@ button:focus-visible{outline:4px solid var(--ink); outline-offset:3px}
   font-weight:800; display:flex; align-items:center; justify-content:center; gap:10px;
 }
 .listen svg{width:24px; height:24px; fill:currentColor}
-.status{margin:0; min-height:3.2em; font-weight:700; max-width:34ch; text-wrap:balance}
+.status{margin:0; min-height:3.6em; font-weight:700; max-width:34ch; text-wrap:balance}
 .status.ok{color:var(--ok)}
 .status.bad{color:var(--bad)}
 .heard{font-weight:600; color:var(--muted)}
-
 .shake{animation:shake .45s}
 @keyframes shake{20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-6px)} 80%{transform:translateX(6px)}}
 .pop{animation:pop .5s}
 @keyframes pop{40%{transform:scale(1.1)} 100%{transform:scale(1)}}
-
-.teacher{align-self:center; background:none; color:var(--muted); text-decoration:underline; font-size:.85rem; padding:8px}
-.notice{background:var(--surface); border:2px solid var(--bad); border-radius:16px; padding:12px 14px; font-weight:700; font-size:.95rem}
-
+.tools{display:flex; justify-content:center; flex-wrap:wrap; gap:4px 16px}
+.teacher{background:none; color:var(--muted); text-decoration:underline; font-size:.85rem; padding:8px}
+.settings{background:var(--surface); border:2px solid var(--line); border-radius:20px; padding:4px 16px}
+.settings summary{cursor:pointer; font-weight:800; padding:12px 0}
+.fields{display:flex; flex-direction:column; gap:14px; padding-bottom:16px}
+.fields label{display:flex; flex-direction:column; gap:6px; font-weight:800; font-size:.9rem}
+.fields input[type=text],.fields input[type=password]{
+  font:inherit; font-weight:600; padding:12px 14px; border-radius:12px; border:2px solid var(--line); background:var(--bg); color:var(--ink); width:100%;
+}
+.fields input:focus{outline:none; border-color:var(--accent)}
+.fields input[type=range]{width:100%; accent-color:var(--accent)}
+.fields .hint{margin:0; color:var(--muted); font-size:.82rem; font-weight:600}
+.adv{border-top:2px solid var(--line); padding-top:2px}
+.adv summary{font-size:.9rem; color:var(--muted)}
+.save{min-height:48px; border-radius:24px; background:var(--accent); color:var(--accent-ink); font-weight:800; padding:0 20px}
 .end{background:var(--surface); border:2px solid var(--line); border-radius:28px; padding:28px 20px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:14px}
-.end .big{font-size:96px; line-height:1}
+.end .big{font-size:96px; line-height:1; font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif}
 .end h2{font-family:var(--display); font-size:2rem; margin:0}
 .end p{margin:0; color:var(--muted); font-weight:700}
-
 @media (prefers-reduced-motion:reduce){ *{animation:none!important} }
 </style>
 </head>
 <body>
 <main class="app">
   <header>
-    <h1>Frutas en inglés</h1>
+    <h1>Inglés para peques</h1>
     <div class="total" aria-label="Estrellas ganadas">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7L12 17.3 5.8 20.9l1.6-7L2 9.2l7.1-.6z"/></svg>
       <span id="totalStars">0</span>
     </div>
   </header>
 
-  <div id="unsupported" class="notice" hidden>
-    Este navegador no reconoce la voz. Abre el juego en Google Chrome o Microsoft Edge (computadora o Android).
-  </div>
-
+  <nav class="cats" id="cats" aria-label="Categorías"></nav>
   <ol class="levels" id="levels" aria-label="Niveles"></ol>
   <p class="level-label" id="levelLabel"></p>
 
   <section class="card" id="card">
     <div class="pic" id="pic" role="img"></div>
+    <div class="dots" id="dots" aria-hidden="true"></div>
     <div class="word" id="word"></div>
     <div class="syll" id="syll"></div>
     <div class="stars" id="stars" aria-hidden="true"></div>
@@ -136,11 +153,40 @@ button:focus-visible{outline:4px solid var(--ink); outline-offset:3px}
     <p class="status" id="status" aria-live="polite"></p>
   </section>
 
-  <button class="teacher" id="skip" type="button">Pasar de nivel (maestro)</button>
+  <details class="settings" id="settings">
+    <summary>Configuración (maestro)</summary>
+    <div class="fields">
+      <label for="cfgMinB">Exigencia (modo gratis): <span id="cfgMinBVal">75</span> de 100
+        <input id="cfgMinB" type="range" min="40" max="98" step="1" value="75">
+      </label>
+      <p class="hint">Es la seguridad con que el navegador entendió la palabra. Más alto = más exigente. No mide el acento, solo qué tan claro se entendió.</p>
+      <details class="adv">
+        <summary>Avanzado: Azure (opcional, de pago)</summary>
+        <div class="fields">
+          <label for="cfgKey">Clave de Azure Speech
+            <input id="cfgKey" type="password" autocomplete="off" spellcheck="false" placeholder="Pega aquí la clave (Key 1)">
+          </label>
+          <label for="cfgRegion">Región
+            <input id="cfgRegion" type="text" autocomplete="off" spellcheck="false" placeholder="eastus">
+          </label>
+          <label for="cfgMin">Precisión mínima con Azure: <span id="cfgMinVal">65</span> de 100
+            <input id="cfgMin" type="range" min="40" max="95" step="1" value="65">
+          </label>
+          <p class="hint">Con una clave puesta, el juego mide la pronunciación de verdad. Sin clave usa el modo gratis. La clave se guarda solo en este navegador.</p>
+        </div>
+      </details>
+      <button class="save" id="cfgSave" type="button">Guardar</button>
+    </div>
+  </details>
+
+  <div class="tools">
+    <button class="teacher" id="skip" type="button">Pasar de nivel (maestro)</button>
+    <button class="teacher" id="reset" type="button">Reiniciar juego</button>
+  </div>
 
   <section class="end" id="end" hidden>
     <div class="big">🏆</div>
-    <h2>¡Terminaste!</h2>
+    <h2>¡Terminaste todo!</h2>
     <p id="endText"></p>
     <button class="mic" id="again" type="button" style="max-width:320px"><span>Jugar otra vez</span></button>
   </section>
@@ -148,42 +194,91 @@ button:focus-visible{outline:4px solid var(--ink); outline-offset:3px}
 
 <script>
 (function(){
-  var FRUITS = [
-    {en:'apple',      emoji:'🍎', tint:'#E5484D', syll:'ap · ple',            ok:['apple','apples']},
-    {en:'banana',     emoji:'🍌', tint:'#F5C400', syll:'ba · na · na',        ok:['banana','bananas']},
-    {en:'orange',     emoji:'🍊', tint:'#F28C0F', syll:'or · ange',           ok:['orange','oranges']},
-    {en:'grapes',     emoji:'🍇', tint:'#7B4FB8', syll:'grapes',              ok:['grapes','grape']},
-    {en:'strawberry', emoji:'🍓', tint:'#E03A5A', syll:'straw · ber · ry',    ok:['strawberry','strawberries']},
-    {en:'mango',      emoji:'🥭', tint:'#F59E0B', syll:'man · go',            ok:['mango','mangos','mangoes']},
-    {en:'pineapple',  emoji:'🍍', tint:'#D9A400', syll:'pine · ap · ple',     ok:['pineapple','pineapples']},
-    {en:'watermelon', emoji:'🍉', tint:'#2FA84F', syll:'wa · ter · mel · on', ok:['watermelon','watermelons']},
-    {en:'coconut',    emoji:'🥥', tint:'#8A6A4F', syll:'co · co · nut',       ok:['coconut','coconuts']},
-    {en:'lemon',      emoji:'🍋', tint:'#E6D200', syll:'lem · on',            ok:['lemon','lemons']}
+  var CATS = [
+    {id:'frutas',   name:'Frutas'},
+    {id:'animales', name:'Animales'},
+    {id:'colores',  name:'Colores'},
+    {id:'numeros',  name:'Números'}
   ];
-  var KEY = 'frutas-voz-v1';
-  /* Claridad mínima (0 a 1) para aceptar la palabra. Sube el número para ser más estricto, bájalo para ser más permisivo. */
-  var MIN_CONFIDENCE = 0.85;
+  /* say = cómo suena, escrito para hablantes de español (pista que aparece tras fallar dos veces) */
+  var ITEMS = [
+    {cat:'frutas',   en:'banana',  emoji:'🍌', tint:'#F5C400', say:'ba-ná-na'},
+    {cat:'frutas',   en:'lemon',   emoji:'🍋', tint:'#E6D200', say:'lé-mon'},
+    {cat:'frutas',   en:'melon',   emoji:'🍈', tint:'#8CCB5E', say:'mé-lon'},
+    {cat:'frutas',   en:'kiwi',    emoji:'🥝', tint:'#6BAA3A', say:'kí-ui'},
+    {cat:'frutas',   en:'peach',   emoji:'🍑', tint:'#F6A06B', say:'pich'},
+    {cat:'frutas',   en:'coconut', emoji:'🥥', tint:'#8A6A4F', say:'kó-ko-nat'},
+    {cat:'frutas',   en:'apple',   emoji:'🍎', tint:'#E5484D', say:'á-pol'},
+    {cat:'frutas',   en:'pear',    emoji:'🍐', tint:'#A8C93B', say:'per'},
+
+    {cat:'animales', en:'cat',     emoji:'🐱', tint:'#F2A65A', say:'ket'},
+    {cat:'animales', en:'cow',     emoji:'🐮', tint:'#9AA7B2', say:'cau'},
+    {cat:'animales', en:'duck',    emoji:'🦆', tint:'#F5C400', say:'dak'},
+    {cat:'animales', en:'bee',     emoji:'🐝', tint:'#F5C400', say:'bi'},
+    {cat:'animales', en:'mouse',   emoji:'🐭', tint:'#A0A0B0', say:'maus'},
+    {cat:'animales', en:'lion',    emoji:'🦁', tint:'#E8A33D', say:'lái-on'},
+    {cat:'animales', en:'panda',   emoji:'🐼', tint:'#7A8B99', say:'pán-da'},
+    {cat:'animales', en:'monkey',  emoji:'🐵', tint:'#A66B3F', say:'món-ki'},
+
+    {cat:'colores',  en:'blue',    color:'#2F6FE0', tint:'#2F6FE0', say:'blu'},
+    {cat:'colores',  en:'yellow',  color:'#F5C400', tint:'#F5C400', say:'yé-lo'},
+    {cat:'colores',  en:'red',     color:'#E5484D', tint:'#E5484D', say:'red'},
+    {cat:'colores',  en:'pink',    color:'#F472B6', tint:'#F472B6', say:'pink'},
+    {cat:'colores',  en:'black',   color:'#1F1F1F', tint:'#1F1F1F', say:'blak'},
+    {cat:'colores',  en:'brown',   color:'#8B5A2B', tint:'#8B5A2B', say:'braun'},
+
+    {cat:'numeros',  en:'one',     num:1,  tint:'#7B4FB8', say:'uán'},
+    {cat:'numeros',  en:'two',     num:2,  tint:'#7B4FB8', say:'tu'},
+    {cat:'numeros',  en:'four',    num:4,  tint:'#7B4FB8', say:'for'},
+    {cat:'numeros',  en:'five',    num:5,  tint:'#7B4FB8', say:'fáiv'},
+    {cat:'numeros',  en:'six',     num:6,  tint:'#7B4FB8', say:'siks'},
+    {cat:'numeros',  en:'eight',   num:8,  tint:'#7B4FB8', say:'eit'},
+    {cat:'numeros',  en:'nine',    num:9,  tint:'#7B4FB8', say:'náin'},
+    {cat:'numeros',  en:'ten',     num:10, tint:'#7B4FB8', say:'ten'}
+  ];
+  /* Palabras que suenan igual y el navegador puede escribir de otra forma */
+  var ALT = {pear:['pair','pare'], bee:['be'], blue:['blew'], red:['read'], one:['1','won'], two:['2','to','too'],
+             four:['4','for','fore'], five:['5'], six:['6'], eight:['8','ate'], nine:['9'], ten:['10']};
+  ITEMS.forEach(function(it){ it.alt = ALT[it.en] || []; });
+
+  var KEY = 'ingles-peques-v1';
+  var CFG_KEY = 'frutas-azure-cfg-v1';
   var STAR_PATH = 'M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7L12 17.3 5.8 20.9l1.6-7L2 9.2l7.1-.6z';
 
   var $ = function(id){ return document.getElementById(id); };
   var el = {
-    levels:$('levels'), label:$('levelLabel'), card:$('card'), pic:$('pic'), word:$('word'), syll:$('syll'),
-    stars:$('stars'), mic:$('mic'), micLabel:$('micLabel'), listen:$('listen'), status:$('status'),
-    skip:$('skip'), end:$('end'), endText:$('endText'), again:$('again'), total:$('totalStars'), unsup:$('unsupported')
+    cats:$('cats'), levels:$('levels'), label:$('levelLabel'), card:$('card'), pic:$('pic'), dots:$('dots'),
+    word:$('word'), syll:$('syll'), stars:$('stars'), mic:$('mic'), micLabel:$('micLabel'), listen:$('listen'),
+    status:$('status'), skip:$('skip'), reset:$('reset'), end:$('end'), endText:$('endText'), again:$('again'),
+    total:$('totalStars'), settings:$('settings'), cfgKey:$('cfgKey'), cfgRegion:$('cfgRegion'),
+    cfgMin:$('cfgMin'), cfgMinVal:$('cfgMinVal'), cfgMinB:$('cfgMinB'), cfgMinBVal:$('cfgMinBVal'), cfgSave:$('cfgSave')
   };
 
-  var state = { level:0, stars:[] };
-  var attempts = 0, locked = false, listening = false, rec = null, nextTimer = null, audioCtx = null;
+  function freshState(){ var s = []; for(var i=0;i<ITEMS.length;i++) s.push(0); return { cur:0, stars:s }; }
+  var state = freshState();
+  var cfg = { key:'', region:'eastus', min:65, minB:75 };
+  var attempts = 0, locked = false, listening = false, nextTimer = null, audioCtx = null;
 
   function load(){
     try{
       var s = JSON.parse(localStorage.getItem(KEY) || 'null');
-      if(s && Array.isArray(s.stars)){ state = { level:Math.min(s.level|0, FRUITS.length), stars:s.stars.slice(0, FRUITS.length) }; }
+      if(s && Array.isArray(s.stars)){
+        var st = freshState();
+        for(var i=0;i<ITEMS.length;i++) st.stars[i] = (s.stars[i]|0);
+        st.cur = Math.min(Math.max(s.cur|0, 0), ITEMS.length-1);
+        state = st;
+      }
+    }catch(e){}
+    try{
+      var c = JSON.parse(localStorage.getItem(CFG_KEY) || 'null');
+      if(c){ cfg.key = c.key || ''; cfg.region = c.region || 'eastus'; cfg.min = +c.min || 65; cfg.minB = +c.minB || 75; }
     }catch(e){}
   }
   function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+  function saveCfg(){ try{ localStorage.setItem(CFG_KEY, JSON.stringify(cfg)); }catch(e){} }
+  function sumStars(){ return state.stars.reduce(function(a,b){ return a+(b|0); }, 0); }
+  function allDone(){ return state.stars.every(function(n){ return n > 0; }); }
 
-  /* ---------- sonidos ---------- */
   function tone(freqs, dur){
     try{
       audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
@@ -200,7 +295,6 @@ button:focus-visible{outline:4px solid var(--ink); outline-offset:3px}
     }catch(e){}
   }
 
-  /* ---------- voz del modelo ---------- */
   function speak(text, rate){
     if(!('speechSynthesis' in window)) return;
     speechSynthesis.cancel();
@@ -211,24 +305,25 @@ button:focus-visible{outline:4px solid var(--ink); outline-offset:3px}
     speechSynthesis.speak(u);
   }
 
-  /* ---------- comparación de lo que dijo el niño ---------- */
-  function lev(a, b){
-    var m = [], i, j;
-    for(i=0;i<=a.length;i++){ m[i]=[i]; }
-    for(j=0;j<=b.length;j++){ m[0][j]=j; }
-    for(i=1;i<=a.length;i++){ for(j=1;j<=b.length;j++){
-      m[i][j] = Math.min(m[i-1][j]+1, m[i][j-1]+1, m[i-1][j-1] + (a[i-1]===b[j-1]?0:1));
-    }}
-    return m[a.length][b.length];
+  /* ---------- progreso y navegación ---------- */
+  function nextTodo(from){
+    var cat = ITEMS[from].cat, i;
+    for(i=from+1; i<ITEMS.length && ITEMS[i].cat === cat; i++){ if(!state.stars[i]) return i; }
+    for(i=0; i<ITEMS.length; i++){ if(ITEMS[i].cat === cat && !state.stars[i]) return i; }
+    for(i=0; i<ITEMS.length; i++){ if(!state.stars[i]) return i; }
+    return -1;
   }
-  /* Estricto: solo la palabra exacta, sin plurales ni palabras parecidas */
-  function matches(transcript, fruit){
-    var clean = transcript.toLowerCase().replace(/[^a-z\s]/g,' ').replace(/\s+/g,' ').trim();
-    if(!clean) return false;
-    return clean.split(' ').indexOf(fruit.en) !== -1 || clean.replace(/ /g,'') === fruit.en;
+  function jumpToCat(catId){
+    if(listening) return;
+    var first = -1, todo = -1;
+    ITEMS.forEach(function(it, i){
+      if(it.cat !== catId) return;
+      if(first < 0) first = i;
+      if(todo < 0 && !state.stars[i]) todo = i;
+    });
+    state.cur = todo >= 0 ? todo : first; save(); showLevel();
   }
 
-  /* ---------- pantalla ---------- */
   function renderStars(n){
     el.stars.innerHTML = '';
     for(var i=0;i<3;i++){
@@ -239,107 +334,166 @@ button:focus-visible{outline:4px solid var(--ink); outline-offset:3px}
       p.setAttribute('d', STAR_PATH); s.appendChild(p); el.stars.appendChild(s);
     }
   }
+  function renderCats(){
+    el.cats.innerHTML = '';
+    var curCat = ITEMS[state.cur].cat;
+    CATS.forEach(function(c){
+      var total = 0, done = 0;
+      ITEMS.forEach(function(it, i){ if(it.cat === c.id){ total++; if(state.stars[i]) done++; } });
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'cat' + (c.id === curCat ? ' current' : '') + (done === total ? ' full' : '');
+      b.appendChild(document.createTextNode(c.name + ' '));
+      var sp = document.createElement('span'); sp.textContent = done + '/' + total; b.appendChild(sp);
+      b.addEventListener('click', function(){ jumpToCat(c.id); });
+      el.cats.appendChild(b);
+    });
+  }
   function renderLevels(){
     el.levels.innerHTML = '';
-    FRUITS.forEach(function(f, i){
+    var curCat = ITEMS[state.cur].cat, n = 0, pos = 0;
+    ITEMS.forEach(function(it, i){
+      if(it.cat !== curCat) return;
+      n++;
       var li = document.createElement('li');
-      li.textContent = i+1;
-      if(i < state.level) li.className = 'done';
-      else if(i === state.level) li.className = 'current';
+      li.textContent = n;
+      if(state.stars[i]) li.className = 'done';
+      if(i === state.cur) li.className += (li.className ? ' ' : '') + 'current';
       el.levels.appendChild(li);
     });
-    var sum = state.stars.reduce(function(a,b){ return a+b; }, 0);
-    el.total.textContent = sum;
+    el.levels.style.setProperty('--n', n);
+    el.total.textContent = sumStars();
   }
-  function setStatus(text, cls, heard){
+  function setStatus(text, cls, detail){
     el.status.className = 'status' + (cls ? ' ' + cls : '');
     el.status.textContent = text;
-    if(heard){
-      var br = document.createElement('br'); el.status.appendChild(br);
-      var sp = document.createElement('span'); sp.className = 'heard'; sp.textContent = 'Escuché: “' + heard + '”';
+    if(detail){
+      el.status.appendChild(document.createElement('br'));
+      var sp = document.createElement('span'); sp.className = 'heard'; sp.textContent = detail;
       el.status.appendChild(sp);
     }
+  }
+  function drawPicture(it){
+    el.pic.className = 'pic'; el.pic.textContent = ''; el.pic.style.removeProperty('--sw');
+    el.pic.style.setProperty('--tint', it.tint); el.dots.style.setProperty('--tint', it.tint);
+    el.dots.innerHTML = '';
+    if(it.color){
+      el.pic.className = 'pic swatch'; el.pic.style.setProperty('--sw', it.color);
+    }else if(it.num){
+      el.pic.className = 'pic num'; el.pic.textContent = it.num;
+      for(var i=0;i<it.num;i++) el.dots.appendChild(document.createElement('i'));
+    }else{
+      el.pic.textContent = it.emoji;
+    }
+    el.pic.setAttribute('aria-label', it.en);
   }
   function showLevel(){
     clearTimeout(nextTimer);
     locked = false; attempts = 0;
-    if(state.level >= FRUITS.length){ showEnd(); return; }
-    el.end.hidden = true; el.card.hidden = false; el.skip.hidden = false;
-    var f = FRUITS[state.level];
-    el.pic.textContent = f.emoji; el.pic.style.setProperty('--tint', f.tint); el.pic.setAttribute('aria-label', f.en);
-    el.word.textContent = f.en; el.syll.textContent = '';
-    el.label.textContent = 'Nivel ' + (state.level+1) + ' de ' + FRUITS.length;
-    renderStars(0); renderLevels();
+    if(allDone()){ showEnd(); return; }
+    el.end.hidden = true; el.card.hidden = false; el.skip.hidden = false; el.cats.hidden = false; el.levels.hidden = false;
+    var it = ITEMS[state.cur], catName = '', pos = 0, n = 0;
+    CATS.forEach(function(c){ if(c.id === it.cat) catName = c.name; });
+    ITEMS.forEach(function(x, i){ if(x.cat === it.cat){ n++; if(i <= state.cur) pos = n; } });
+    drawPicture(it);
+    el.word.textContent = it.en; el.syll.textContent = '';
+    el.label.textContent = catName + ' · nivel ' + pos + ' de ' + n;
+    renderStars(0); renderCats(); renderLevels();
     setStatus('Toca el micrófono y di la palabra en inglés.');
-    el.mic.disabled = !SR;
   }
   function showEnd(){
-    el.card.hidden = true; el.skip.hidden = true; el.end.hidden = false;
+    el.card.hidden = true; el.skip.hidden = true; el.cats.hidden = true; el.levels.hidden = true; el.end.hidden = false;
     el.label.textContent = 'Juego completo';
-    var sum = state.stars.reduce(function(a,b){ return a+b; }, 0);
-    el.endText.textContent = 'Ganaste ' + sum + ' de ' + (FRUITS.length*3) + ' estrellas.';
-    renderLevels();
+    el.endText.textContent = 'Ganaste ' + sumStars() + ' de ' + (ITEMS.length*3) + ' estrellas.';
+    el.total.textContent = sumStars();
     tone([523,659,784,1047], 0.16);
   }
 
-  /* ---------- resultado ---------- */
-  function succeed(heard, skipped){
+  function succeed(detail, skipped){
     if(locked) return;
     locked = true;
     var n = skipped ? 1 : (attempts === 0 ? 3 : attempts === 1 ? 2 : 1);
-    state.stars[state.level] = n;
-    state.level += 1; save();
+    var prev = state.cur;
+    state.stars[prev] = Math.max(state.stars[prev] || 0, n);
+    var nxt = nextTodo(prev);
+    var catLeft = false;
+    ITEMS.forEach(function(it, i){ if(it.cat === ITEMS[prev].cat && !state.stars[i]) catLeft = true; });
+    if(nxt >= 0) state.cur = nxt;
+    save();
     renderStars(n);
     el.pic.classList.remove('pop'); void el.pic.offsetWidth; el.pic.classList.add('pop');
-    setStatus(skipped ? 'Nivel superado.' : '¡Muy bien! Se entendió claro.', 'ok', skipped ? '' : heard);
+    var msg = skipped ? 'Nivel superado.' : (catLeft ? '¡Muy bien! Buena pronunciación.' : '¡Muy bien! Terminaste esta categoría.');
+    setStatus(msg, 'ok', skipped ? '' : detail);
     tone([659,880], 0.14);
-    var sum = state.stars.reduce(function(a,b){ return a+b; }, 0);
-    el.total.textContent = sum;
-    nextTimer = setTimeout(showLevel, 1800);
+    el.total.textContent = sumStars();
+    nextTimer = setTimeout(showLevel, 1900);
   }
-  function fail(heard, lowConf){
+  function fail(detail){
     attempts += 1;
     el.card.classList.remove('shake'); void el.card.offsetWidth; el.card.classList.add('shake');
     tone([300,220], 0.16);
-    var f = FRUITS[state.level];
-    if(attempts >= 2) el.syll.textContent = f.syll;
-    var msg = lowConf ? 'Casi. Se entendió, pero suena poco claro. Escucha y repite más despacio.'
-      : (attempts >= 2 ? 'Casi. Escucha y repite por sílabas.' : 'Casi. Inténtalo otra vez.');
-    setStatus(msg, 'bad', heard);
+    if(attempts >= 2) el.syll.textContent = 'Suena: ' + ITEMS[state.cur].say;
+    setStatus(attempts >= 2 ? 'Casi. Escucha y repite despacio.' : 'Casi. Escucha y inténtalo otra vez.', 'bad', detail);
   }
 
-  /* ---------- reconocimiento de voz ---------- */
-  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-
+  /* ---------- evaluación de pronunciación con Azure Speech ---------- */
   function setListening(on){
     listening = on;
     el.mic.classList.toggle('listening', on);
     el.micLabel.textContent = on ? 'Te escucho…' : 'Hablar';
   }
-  function startListening(){
-    if(!SR || locked || listening) return;
-    if('speechSynthesis' in window) speechSynthesis.cancel();
-    var fruit = FRUITS[state.level];
-    var judged = false, errored = false, lastHeard = '';
-    rec = new SR();
-    rec.lang = 'en-US'; rec.interimResults = true; rec.maxAlternatives = 1; rec.continuous = false;
 
-    rec.onstart = function(){ setListening(true); setStatus('Di: “' + fruit.en + '”'); };
+  function handleResult(result){
+    var R = SpeechSDK.ResultReason;
+    if(result.reason === R.Canceled){
+      var cd = SpeechSDK.CancellationDetails.fromResult(result);
+      var authProblem = /401|403|Authentication|Unauthorized|Forbidden/i.test((cd.errorDetails || '') + ' ' + (cd.reason || ''));
+      setStatus(authProblem ? 'La clave o la región de Azure no son válidas. Revisa la configuración.'
+                            : 'No se pudo conectar con el servicio de voz. Revisa tu internet.', 'bad');
+      return;
+    }
+    if(result.reason === R.NoMatch || !result.text){
+      setStatus('No te escuché bien. Acércate al micrófono y prueba otra vez.', 'bad');
+      return;
+    }
+    var pa = SpeechSDK.PronunciationAssessmentResult.fromResult(result);
+    var acc = Math.round(pa.accuracyScore), comp = Math.round(pa.completenessScore);
+    if(isNaN(acc)){ setStatus('No se pudo calcular la pronunciación. Prueba otra vez.', 'bad'); return; }
+    var detail = 'Escuché “' + result.text.replace(/[.?!]+$/,'').trim() + '” · precisión ' + acc + ' de 100 (mínimo ' + cfg.min + ')';
+    if(acc >= cfg.min && (isNaN(comp) || comp >= 80)) succeed(detail); else fail(detail);
+  }
+
+  /* ---------- modo gratis: reconocimiento de voz del navegador ---------- */
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  function matchesBrowser(text, item){
+    var clean = text.toLowerCase().replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim();
+    if(!clean) return false;
+    var accept = [item.en].concat(item.alt || []);
+    var tokens = clean.split(' ');
+    for(var i=0;i<accept.length;i++){ if(tokens.indexOf(accept[i]) !== -1) return true; }
+    return accept.indexOf(clean.replace(/ /g,'')) !== -1;
+  }
+
+  function startBrowserListening(){
+    if(!SR){ setStatus('Este navegador no reconoce la voz. Usa Google Chrome o Microsoft Edge.', 'bad'); return; }
+    if('speechSynthesis' in window) speechSynthesis.cancel();
+    var item = ITEMS[state.cur];
+    var judged = false, errored = false;
+    var rec = new SR();
+    rec.lang = 'en-US'; rec.interimResults = false; rec.maxAlternatives = 1; rec.continuous = false;
+
+    rec.onstart = function(){ setListening(true); setStatus('Di: “' + item.en + '”'); };
     rec.onresult = function(e){
       if(judged) return;
-      var res = e.results[e.results.length-1];
-      var top = res[0];
-      lastHeard = top.transcript || '';
-      if(!res.isFinal) return;
       judged = true;
+      var top = e.results[0][0];
+      var text = (top.transcript || '').trim();
       var conf = (typeof top.confidence === 'number') ? top.confidence : 0;
-      var pct = conf > 0 ? Math.round(conf*100) : null;
-      var said = lastHeard.trim() + (pct !== null ? ' (' + pct + '%)' : '');
-      var wordOk = matches(lastHeard, fruit);
-      var clear = (conf === 0) || conf >= MIN_CONFIDENCE;
-      if(wordOk && clear){ succeed(said); }
-      else if(wordOk){ fail(said, true); }
-      else { fail(said); }
+      var detail = 'Escuché “' + text + '”' + (conf > 0 ? ' · claridad ' + Math.round(conf*100) + ' de 100 (mínimo ' + cfg.minB + ')' : '');
+      var wordOk = matchesBrowser(text, item);
+      var clear = (conf === 0) || (conf*100 >= cfg.minB);
+      if(wordOk && clear) succeed(detail); else fail(detail);
     };
     rec.onerror = function(e){
       errored = true; judged = true;
@@ -355,24 +509,89 @@ button:focus-visible{outline:4px solid var(--ink); outline-offset:3px}
     };
     rec.onend = function(){
       setListening(false);
-      if(!judged && !errored){
-        if(lastHeard) fail(lastHeard); else setStatus('No te escuché. Toca el micrófono y prueba otra vez.', 'bad');
-      }
+      if(!judged && !errored) setStatus('No te escuché. Toca el micrófono y prueba otra vez.', 'bad');
     };
     try{ rec.start(); }catch(err){ setListening(false); }
   }
 
+  function loadSdk(){
+    if(typeof SpeechSDK !== 'undefined' || document.getElementById('sdkScript')) return;
+    var s = document.createElement('script'); s.id = 'sdkScript';
+    s.src = 'https://cdn.jsdelivr.net/npm/microsoft-cognitiveservices-speech-sdk@1.40.0/distrib/browser/microsoft.cognitiveservices.speech.sdk.bundle-min.js';
+    document.head.appendChild(s);
+  }
+
+  function startListening(){
+    if(locked || listening) return;
+    if(!cfg.key || typeof SpeechSDK === 'undefined'){ startBrowserListening(); return; }
+    if('speechSynthesis' in window) speechSynthesis.cancel();
+    var item = ITEMS[state.cur];
+    var recognizer = null, closed = false;
+    try{
+      var sc = SpeechSDK.SpeechConfig.fromSubscription(cfg.key.trim(), cfg.region.trim());
+      sc.speechRecognitionLanguage = 'en-US';
+      var ac = SpeechSDK.AudioConfig.fromDefaultMicrophoneInput();
+      var pa = new SpeechSDK.PronunciationAssessmentConfig(
+        item.en,
+        SpeechSDK.PronunciationAssessmentGradingSystem.HundredMark,
+        SpeechSDK.PronunciationAssessmentGranularity.Phoneme,
+        true
+      );
+      recognizer = new SpeechSDK.SpeechRecognizer(sc, ac);
+      pa.applyTo(recognizer);
+    }catch(err){
+      setStatus('No se pudo iniciar el servicio de voz. Revisa la configuración.', 'bad'); return;
+    }
+    function done(){
+      if(closed) return; closed = true; setListening(false);
+      try{ recognizer.close(); }catch(e){}
+    }
+    setListening(true);
+    setStatus('Di: “' + item.en + '”');
+    recognizer.recognizeOnceAsync(
+      function(result){ try{ handleResult(result); } finally { done(); } },
+      function(){ done(); setStatus('No se pudo usar el micrófono. Permite el micrófono en el navegador y prueba otra vez.', 'bad'); }
+    );
+  }
+
   /* ---------- eventos ---------- */
   el.mic.addEventListener('click', startListening);
-  el.listen.addEventListener('click', function(){
-    if(state.level < FRUITS.length) speak(FRUITS[state.level].en, 0.75);
+  el.listen.addEventListener('click', function(){ speak(ITEMS[state.cur].en, 0.75); });
+  el.skip.addEventListener('click', function(){ succeed('', true); });
+  el.again.addEventListener('click', function(){ state = freshState(); save(); showLevel(); });
+
+  var resetArmed = false, resetTimer = null;
+  function disarmReset(){ resetArmed = false; clearTimeout(resetTimer); el.reset.textContent = 'Reiniciar juego'; }
+  el.reset.addEventListener('click', function(){
+    if(!resetArmed){
+      resetArmed = true; el.reset.textContent = '¿Seguro? Toca otra vez';
+      resetTimer = setTimeout(disarmReset, 4000); return;
+    }
+    disarmReset(); state = freshState(); save(); showLevel();
   });
-  el.skip.addEventListener('click', function(){ if(state.level < FRUITS.length) succeed('', true); });
-  el.again.addEventListener('click', function(){ state = { level:0, stars:[] }; save(); showLevel(); });
+
+  el.cfgMin.addEventListener('input', function(){ el.cfgMinVal.textContent = el.cfgMin.value; });
+  el.cfgMinB.addEventListener('input', function(){ el.cfgMinBVal.textContent = el.cfgMinB.value; });
+  el.cfgSave.addEventListener('click', function(){
+    cfg.key = el.cfgKey.value.trim();
+    cfg.region = (el.cfgRegion.value.trim() || 'eastus').toLowerCase();
+    cfg.min = +el.cfgMin.value || 65;
+    cfg.minB = +el.cfgMinB.value || 75;
+    saveCfg();
+    if(cfg.key) loadSdk();
+    el.settings.open = false;
+    if(!locked && !allDone()){
+      setStatus('Configuración guardada. Toca el micrófono y di la palabra.', 'ok');
+    }
+  });
+
   if('speechSynthesis' in window) speechSynthesis.getVoices();
 
-  if(!SR) el.unsup.hidden = false;
   load();
+  el.cfgKey.value = cfg.key; el.cfgRegion.value = cfg.region;
+  el.cfgMin.value = cfg.min; el.cfgMinVal.textContent = cfg.min;
+  el.cfgMinB.value = cfg.minB; el.cfgMinBVal.textContent = cfg.minB;
+  if(cfg.key) loadSdk();
   showLevel();
 })();
 </script>
